@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "outDir": "lib",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "declaration": true,
+        "noImplicitAny": true,
+        "removeComments": true,
+        "sourceMap": true,
+        "experimentalDecorators": true
+    },
+    "filesGlob": [
+        "typings/index.d.ts",
+        "src/**/*.ts"
+    ],
+    "files": [
+        "typings/index.d.ts",
+        "src/Errors.ts",
+        "src/index.ts",
+        "src/Validator.ts"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}

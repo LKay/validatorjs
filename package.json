@@ -1,7 +1,7 @@
 {
   "name": "validatorjs",
   "description": "Validation library inspired by Laravel's Validator",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "author": "David <dtang859@gmail.com>",
   "contributors": [
     {
@@ -14,7 +14,12 @@
     }
   ],
   "license": "MIT",
-  "main": "./src/validator.js",
+  "main": "./lib/index.js",
+  "typings" : "./lib/index.d.ts",
+  "files": [
+    "lib/",
+    "dist/"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/skaterdav85/validatorjs"
@@ -33,30 +38,33 @@
     "laravel",
     "laravel-validator-for-js"
   ],
-  "devDependencies": {
-    "browserify": "^10.2.4",
-    "chai": "~3.0.0",
-    "grunt": "0.4.5",
-    "grunt-browserify": "^3.8.0",
-    "grunt-cli": "^0.1.13",
-    "grunt-contrib-concat": "~0.4.0",
-    "grunt-contrib-jshint": "0.10.0",
-    "grunt-contrib-uglify": "0.9.1",
-    "grunt-contrib-watch": "~0.6.1",
-    "jit-grunt": "^0.9.1",
-    "karma": "~0.12.17",
-    "karma-browserify": "^4.2.1",
-    "karma-chai": "~0.1.0",
-    "karma-chrome-launcher": "~0.1.4",
-    "karma-coverage": "~0.2.4",
-    "karma-growl-notifications-reporter": "0.0.2",
-    "karma-mocha": "~0.1.10",
-    "karma-phantomjs-launcher": "~0.1.4",
-    "mocha": "~2.2.5"
+  "devDependencies" : {
+    "chai": "~3.5.0",
+    "chai-as-promised": "~5.3.0",
+    "html-webpack-plugin": "~2.17.0",
+    "jsdom": "~9.2.1",
+    "jsdom-global": "~2.0.0",
+    "mocha": "~2.5.3",
+    "nock": "~8.0.0",
+    "path": "~0.12.7",
+    "sinon": "~1.17.4",
+    "sinon-chai": "~2.8.0",
+    "source-map-loader": "~0.1.5",
+    "tsconfig-glob" : "~0.4.3",
+    "tslint": "~3.10.2",
+    "ts-loader": "~0.8.2",
+    "ts-node": "~0.7.3",
+    "typings": "~1.0.4",
+    "typescript" : "~1.8.10",
+    "webpack": "~1.13.1",
+    "webpack-dev-server": "~1.14.1"
   },
-  "scripts": {
-    "test-node": "node node_modules/mocha/bin/mocha spec",
-    "test-browser": "grunt dist && node node_modules/karma/bin/karma start --single-run --browsers PhantomJS",
-    "test": "npm run test-node && npm run test-browser"
+  "scripts" : {
+    "tsconfig" : "./node_modules/tsconfig-glob/cli .",
+    "prepare": "npm install && typings install && npm run tsconfig",
+    "linter": "./node_modules/tslint/bin/tslint src/**/*.ts",
+    "start" : "webpack-dev-server",
+    "clean": "npm prune && rm -rf node_modules typings lib",
+    "test": "npm run linter && ./node_modules/mocha/bin/mocha --require jsdom-global/register --compilers ts:ts-node/register test/**/*.specs.ts"
   }
 }
