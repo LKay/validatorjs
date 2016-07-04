@@ -3,25 +3,44 @@ import { Rules, RuleCheck } from "./Rules"
 import { Messages, ValidationMessages } from "./Messages"
 import { Errors } from "./Errors"
 
-export interface RulesSchema {
-    [key: string]: string | Array<string> | RulesSchema
-}
-
 export type AttributeFormatter = (attribute: string) => string
 
-class Validator {
-    
+const formatter: AttributeFormatter = (attribute: string) => attribute.replace(/[_\[]/g, ' ').replace(/]/g, '')
+
+export class Validator {
+
+    /* Promise A+ */
+    public static Promise: PromiseConstructor = Promise
+
+    /* Defaults */
+    public static lang: string = "en"
+    public static attributeFormatter: AttributeFormatter = formatter
+
     public input: any
+    public rules: Rules
     public messages: Messages
     public errors: Errors = new Errors()
     public errorCount: number = 0
-    public rules: Rules
 
-    public static lang: string = "en"
-    public static attributeFormatter: AttributeFormatter = (attribute: string) => attribute.replace(/[_\[]/g, ' ').replace(/]/g, '')
-    public static numericRules: Array<string> = ["integer", "numeric"]
+    constructor (input: any, rules: any, messages?: any) {
+        this.input = input
+        this.rules = new Rules(rules)
+    }
 
+    public check (): boolean {
+        return true
+    }
+
+    public checkAsync (passes: Function, fails: Function): Promise<boolean> {
+        return Validator.Promise.resolve(true)
+    }
+
+
+    /*
     constructor (input: any, rules: RulesSchema, customMessages?: ValidationMessages) {
+        this.input = input
+        this.messages = new Messages()
+        this.rules = new Rules(rules)
         /*
          var lang = Validator.getDefaultLang();
          this.input = this._flattenObject(input);
@@ -35,18 +54,12 @@ class Validator {
 
          this.hasAsync = false;
          this.rules = this._parseRules(rules);
-         */
+
     }
+    */
 
-    public check (): void {}
-
-    @deprecate("Method `checkAsync` is deprecated since 3.0.0. Use `check` instead.")
-    public checkAsync (): void {
-        this.check()
-    }
-
-    public static make (input: any, rules: RulesSchema, customMessages?: ValidationMessages): Validator {
-        return new Validator(input, rules, customMessages)
+    public static make (input: any, rules: any, messages?: any): Validator {
+        return new Validator(input, rules, messages)
     }
 
     public static setMessages (lang: string, messages: ValidationMessages): void {
@@ -77,7 +90,7 @@ class Validator {
 
     }
 
-    @deprecate("Method `registerAsync` is deprecated since 3.0.0. Use `register` instead.")
+    @deprecate("Method `registerAsync` is deprecated since 3.0.0. Use `register` instead.", { url : "https://git.io/vKfmt" })
     public static registerAsync (name: string, fn: RuleCheck, message?: string): void {
         Validator.register(name, fn, message)
     }

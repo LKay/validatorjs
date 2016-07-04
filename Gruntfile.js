@@ -58,7 +58,7 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'dist/validator.js': 'src/validator.js'
+          'dist/validator.js': 'src/validator_.js'
         },
         options: {
           banner: "/*! <%= pkg.name %> - v<%= pkg.version %> - <%= pkg.homepage %> - " +
@@ -74,7 +74,7 @@ module.exports = function(grunt) {
         banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - <%= pkg.homepage %> - <%= grunt.template.today("yyyy-mm-dd") %> */'
       },
       dist: {
-        src: 'dist/validator.js',
+        src: 'dist/validator_.js',
         dest: 'dist/validator.min.js'
       }
     },

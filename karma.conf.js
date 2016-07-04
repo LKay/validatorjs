@@ -15,7 +15,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'dist/validator.js',
+      'dist/validator_.js',
       'spec/*.js'
     ],
 

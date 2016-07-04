@@ -1,4 +1,4 @@
-export function flatten (obj: any): any {
+export function flatten (obj: Object): Object {
     const flattened: any = {}
 
     function recurse (current: any, property?: string) {
@@ -9,10 +9,10 @@ export function flatten (obj: any): any {
         if (Object(current) !== current || Array.isArray(current)) {
             flattened[property] = current
         } else {
-            if (current.getOwnPropertyNames().length === 0) {
+            if (Object.getOwnPropertyNames(current).length === 0) {
                 flattened[property] = {}
             } else {
-                for (let p: string in current) {
+                for (let p in current) {
                     recurse(current[p], property ? property + "." + p : p)
                 }
             }
@@ -26,14 +26,14 @@ export function flatten (obj: any): any {
     return flattened
 }
 
-export function objectPath (obj: any, path: string = ""): any {
+export function objectPath (obj: Object, path: string = ""): any {
     const keys: Array<string> = path
         .replace(/\[(\w+)\]/g, ".$1")
         .replace(/^\./, "")
         .split(".")
     let value: any = Object.assign({}, obj)
 
-    for (let key: string in keys) {
+    for (let key in keys) {
         if (value.hasOwnProperty(key)) {
             value = value[key]
         } else {

@@ -18,6 +18,11 @@
         "typings/index.d.ts",
         "src/Errors.ts",
         "src/index.ts",
+        "src/Messages.ts",
+        "src/Rules.ts",
+        "src/rules/Required.ts",
+        "src/rules/Rule.ts",
+        "src/Utils.ts",
         "src/Validator.ts"
     ],
     "exclude": [

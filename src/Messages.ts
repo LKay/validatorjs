@@ -1,5 +1,5 @@
 export interface ValidationMessages {
-    [field: string]: string
+    [name: string]: string | ValidationMessages
 }
 
 export class Messages {
