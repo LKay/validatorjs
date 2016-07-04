@@ -1,5 +1,5 @@
 import { Rule } from "./rules/Rule"
-import { flatten } from "./Utils"
+import { flatten } from "flat"
 
 export type RuleSync = (value: any, requirement: any, attribute: string) => boolean
 export type RuleAync = (value: any, requirement: any, attribute: string, done?: Function) => Promise<boolean> | void
@@ -23,7 +23,7 @@ export class Rules {
     }
 
     constructor (rules: any) {
-        this.rules = this.parseRules(flatten(rules))
+        this.rules = this.parseRules(flatten(rules, { safe : true }))
 
         console.warn(this.rules)
     }
