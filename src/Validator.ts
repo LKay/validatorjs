@@ -1,5 +1,6 @@
 import { deprecate } from "core-decorators"
-import { Rules, RuleCheck } from "./Rules"
+import {Rules, ParsedRules, ParsedRule} from "./Rules"
+import { RuleValidator } from "./rules/Rule"
 import { Messages, ValidationMessages } from "./Messages"
 import { Errors } from "./Errors"
 
@@ -19,20 +20,39 @@ export class Validator {
     public input: any
     public rules: Rules
     public messages: Messages
-    public errors: Errors = new Errors()
-    public errorCount: number = 0
+    public errors: Errors
 
     constructor (input: any, rules: any, messages?: any) {
         this.input = input
-        this.rules = new Rules(rules)
+        this.messages = new Messages(messages)
+        this.errors = new Errors(this.messages)
+        this.rules = new Rules(rules, this.errors)
     }
 
     public check (): boolean {
-        return true
+        if (this.rules.hasAsync) {
+            throw new Error("Cannot synchronously validate schema containing asynchronous rules.")
+        }
+        return this.rules.validate(this.input)
     }
 
-    public checkAsync (passes: Function, fails: Function): Promise<boolean> {
-        return Validator.Promise.resolve(true)
+    public checkAsync (passes?: Function, fails?: Function): Promise<boolean> {
+        return this.rules.validateAsync(this.input)
+    }
+
+    public passes (callback?: Function): boolean | Promise<boolean> {
+        if (this.rules.hasAsync) {
+            return this.checkAsync(callback)
+        }
+        return this.check()
+    }
+
+    public fails (callback?: Function): boolean | Promise<boolean> {
+        if (this.rules.hasAsync) {
+            return this.checkAsync(null, callback)
+                .then((result: boolean) => Validator.Promise.resolve(!result))
+        }
+        return !this.check()
     }
 
 
@@ -86,13 +106,12 @@ export class Validator {
 
     }
 
-    public static register (name: string, fn: RuleCheck, message?: string): void {
-
+    public static register (name: string, fn: RuleValidator, message?: string): void {
+        Rules.register(name, fn, message)
     }
-
-    @deprecate("Method `registerAsync` is deprecated since 3.0.0. Use `register` instead.", { url : "https://git.io/vKfmt" })
-    public static registerAsync (name: string, fn: RuleCheck, message?: string): void {
-        Validator.register(name, fn, message)
+    
+    public static registerAsync (name: string, fn: RuleValidator, message?: string): void {
+        Rules.register(name, fn, message, true)
     }
 
 }

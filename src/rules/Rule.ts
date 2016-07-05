@@ -1,21 +1,21 @@
-import { RuleCheck } from "../Rules"
+export type RuleValidator = (value: any, ...params: any[]) => boolean | Promise<boolean> | void
 
 export class Rule {
 
     public name: string
-    public checkFn: RuleCheck
+    public fn: RuleValidator
     public message: string
-    public async: boolean
+    public isAsync: boolean
     
-    constructor (name: string, fn: RuleCheck, message?: string) {
+    constructor (name: string, fn: RuleValidator, message?: string, isAsync: boolean = false) {
         this.name = name
-        this.checkFn = fn
+        this.fn = fn
         this.message = message
-        this.async = Rule.isAsync(this.checkFn)
+        this.isAsync = isAsync
     }
 
-    public static isAsync (fn: Function) {
-        return fn.arguments.length === 4 || fn.name === "async"
+    public parseParams (params: Array<string>): Array<any> {
+        return params
     }
 
     /*

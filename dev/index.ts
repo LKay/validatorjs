@@ -1,13 +1,14 @@
 import { Validator } from "../src/Validator"
 
 const fields = {
-    name : ""
+    name : "abc"
 }
 
 const rules = {
     name : "required|min:3",
+    test : "async",
     foo: {
-        bar : "string"
+        bar : "required"
     }
 }
 
@@ -23,3 +24,5 @@ console.warn(Validator)
 const validator = new Validator(fields, rules, messages)
 
 console.warn(validator)
+
+console.warn(validator.passes(), validator.fails())

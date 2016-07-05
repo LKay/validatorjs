@@ -6,6 +6,8 @@
     "flat": "registry:dt/flat#0.0.0+20160317120654",
     "mocha": "registry:dt/mocha#2.2.5+20160317120654",
     "node": "registry:dt/node#6.0.0+20160524002506",
+    "object-assign": "registry:dt/object-assign#4.0.1+20160316155526",
+    "object-path": "registry:dt/object-path#0.9.0+20160317120654",
     "sinon": "registry:dt/sinon#1.16.0+20160517064723",
     "sinon-chai": "registry:dt/sinon-chai#2.7.0+20160317120654"
   }

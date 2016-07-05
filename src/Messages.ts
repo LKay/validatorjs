@@ -3,5 +3,7 @@ export interface ValidationMessages {
 }
 
 export class Messages {
-
+    constructor (messages?: any) {
+        
+    }
 }
