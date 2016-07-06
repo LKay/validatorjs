@@ -1,5 +1,5 @@
 import { deprecate } from "core-decorators"
-import {Rules, ParsedRules, ParsedRule} from "./Rules"
+import { Rules, ParsedRules } from "./Rules"
 import { RuleValidator } from "./rules/Rule"
 import { Messages, ValidationMessages } from "./Messages"
 import { Errors } from "./Errors"
@@ -55,39 +55,16 @@ export class Validator {
         return !this.check()
     }
 
-
-    /*
-    constructor (input: any, rules: RulesSchema, customMessages?: ValidationMessages) {
-        this.input = input
-        this.messages = new Messages()
-        this.rules = new Rules(rules)
-        /*
-         var lang = Validator.getDefaultLang();
-         this.input = this._flattenObject(input);
-
-         this.messages = Lang._make(lang);
-         this.messages._setCustom(customMessages);
-         this.setAttributeFormatter(Validator.prototype.attributeFormatter);
-
-         this.errors = new Errors();
-         this.errorCount = 0;
-
-         this.hasAsync = false;
-         this.rules = this._parseRules(rules);
-
-    }
-    */
-
     public static make (input: any, rules: any, messages?: any): Validator {
         return new Validator(input, rules, messages)
     }
 
     public static setMessages (lang: string, messages: ValidationMessages): void {
-
+        Messages.messages[lang] = messages
     }
 
-    public static getMessages (lang?: string): ValidationMessages {
-        return {}
+    public static getMessages (lang: string = Validator.lang): ValidationMessages {
+        return Messages.messages[lang]
     }
 
     public static useLang (lang: string): void {
@@ -102,10 +79,6 @@ export class Validator {
 
     }
 
-    public static stopOnError (attributes: boolean | Array<string>): void {
-
-    }
-
     public static register (name: string, fn: RuleValidator, message?: string): void {
         Rules.register(name, fn, message)
     }
@@ -115,3 +88,5 @@ export class Validator {
     }
 
 }
+
+export default Validator

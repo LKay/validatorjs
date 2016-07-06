@@ -68,7 +68,7 @@
     "test": "npm run linter && ./node_modules/mocha/bin/mocha --require jsdom-global/register --compilers ts:ts-node/register test/**/*.specs.ts"
   },
   "dependencies": {
-    "core-decorators": "^0.12.3",
+    "array-find-index": "^1.0.1",
     "flat": "^2.0.1",
     "object-assign": "^4.1.0",
     "object-path": "^0.11.1"

@@ -7,8 +7,7 @@
         "declaration": true,
         "noImplicitAny": true,
         "removeComments": true,
-        "sourceMap": true,
-        "experimentalDecorators": true
+        "sourceMap": true
     },
     "filesGlob": [
         "typings/index.d.ts",
@@ -18,6 +17,9 @@
         "typings/index.d.ts",
         "src/Errors.ts",
         "src/index.ts",
+        "src/lang.ts",
+        "src/lang/en.ts",
+        "src/lang/es.ts",
         "src/Messages.ts",
         "src/Rules.ts",
         "src/rules/Accepted.ts",

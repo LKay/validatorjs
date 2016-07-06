@@ -1,3 +1,5 @@
+import { ErrorParams } from "../Errors"
+
 export type RuleValidator = (value: any, ...params: any[]) => boolean | Promise<boolean> | void
 
 export class Rule {
@@ -16,6 +18,10 @@ export class Rule {
 
     public parseParams (params: Array<string>): Array<any> {
         return params
+    }
+    
+    public getErrorParams (...params: any[]): ErrorParams {
+        return {}
     }
 
     /*

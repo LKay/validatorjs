@@ -1,14 +1,24 @@
+import * as findIndex from "array-find-index"
 import { Validator } from "./Validator"
-import { Messages } from "./Messages"
+import { Messages, ErrorMessages } from "./Messages"
 
-export interface ErrorMessages {
-    [field: string]: Array<string>
+export interface ErrorParams {
+    [name: string]: string
+}
+
+export interface ValidationError {
+    name: string
+    params: ErrorParams
+}
+
+export interface ValidationErrors {
+    [field: string]: Array<ValidationError>
 }
 
 export class Errors {
 
     private messages: Messages
-    public errors: ErrorMessages = {} as ErrorMessages
+    public errors: ValidationErrors = {}
     public errorsCount: number = 0
 
     constructor (messages: Messages) {
@@ -17,33 +27,33 @@ export class Errors {
 
     public clear (): void {
         this.errorsCount = 0
-        this.errors = {} as ErrorMessages
+        this.errors = {}
     }
 
-    public add (attribute: string, message: string): void {
+    public add (attribute: string, error: ValidationError): void {
         if (!this.has(attribute)) {
             this.errors[attribute] = []
         }
 
-        if (this.errors[attribute].indexOf(message) === -1) {
-            this.errors[attribute].push(message)
+        if (findIndex(this.errors[attribute], (_: ValidationError) => _.name === error.name) === -1) {
+            this.errors[attribute].push(error)
         }
         this.errorsCount++
     }
 
     public get (attribute: string, lang: string = Validator.lang): Array<string> {
-        return this.errors[attribute] || []
+        return this.messages.getMessages(attribute, this.errors[attribute], lang)
     }
 
     public first (attribute: string, lang: string = Validator.lang): string | boolean {
         if (this.has(attribute)) {
-            return this.errors[attribute][0]
+            return this.messages.getMessage(attribute, this.errors[attribute][0], lang)
         }
         return false
     }
 
     public all (lang: string = Validator.lang): ErrorMessages {
-        return this.errors
+        return this.messages.getErrorMessages(this.errors, lang)
     }
 
     public has (attribute: string): boolean {

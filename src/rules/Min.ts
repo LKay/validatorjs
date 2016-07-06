@@ -1,10 +1,10 @@
 import { Rule, RuleValidator } from "./Rule"
-import { RuleValidatorError } from "../Errors"
+import { RuleValidatorError, ErrorParams } from "../Errors"
 
 const isAsync: boolean = false
 const name: string = "min"
 const validator: RuleValidator = (value: any, min: number) => {
-    return (typeof value === "number" && value >= min) || String(value).length >= min
+    return (typeof value === "number" && value >= min) || (typeof value === "string" && value.length >= min) || false
 }
 
 export type ValidatorMinParams = [number]
@@ -28,6 +28,10 @@ export class RuleMin extends Rule {
         }
         
         return [min]
+    }
+
+    public getErrorParams (min: number): ErrorParams {
+        return { min : String(min) }
     }
 
 }

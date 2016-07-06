@@ -26,7 +26,7 @@ module.exports = function(grunt) {
         options: {
           require: ['./src/lang/es:./lang/es']
         },
-        dest: 'dist/lang/es.js'
+        dest: 'dist/lang/es.ts'
       },
       frLang: {
         src: [],

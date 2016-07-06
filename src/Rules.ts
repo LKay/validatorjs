@@ -6,19 +6,22 @@ import { Errors } from "./Errors"
 /* Predefined Rules */
 import { RuleRequired } from "./rules/Required"
 import { RuleMin } from "./rules/Min"
+import {error} from "util";
 
 export interface RegisteredRules {
     [name: string]: Rule
 }
 
-export interface ParsedRule {
+export interface ParsedValidator {
     name: string
     params: Array<any>
 }
 
 export interface ParsedRules {
-    [name: string]: Array<ParsedRule>
-}
+    [name: string]: {
+        bail: boolean
+        validators: Array<ParsedValidator>
+    }}
 
 export class Rules {
 
@@ -47,17 +50,23 @@ export class Rules {
     }
 
     public validate (input: any): boolean {
-        let passes: boolean = true
-        
         this.errors.clear()
 
         Object.keys(this.rules).forEach((field: string) => {
-            this.rules[field].forEach((rule: ParsedRule) => {
+            let passes: boolean = true
+
+            this.rules[field].validators.forEach((rule: ParsedValidator) => {
+                if (this.rules[field].bail && !passes) {
+                    return
+                }
+
                 const value: any = objectPath.get(input, field)
                 const result = Rules.registered[rule.name].fn(value, ...rule.params, input)
 
                 if (!result) {
-                    this.errors.add(field, rule.name)
+                    passes = false
+                    const errorParams = Rules.registered[rule.name].getErrorParams(...rule.params)
+                    this.errors.add(field, { name : rule.name, params : errorParams })
                 }
             })
         })
@@ -82,7 +91,9 @@ export class Rules {
                 _rules = fieldRules
             }
 
-            _rules.forEach((rule: string) => {
+            const bail: boolean = _rules.indexOf("bail") !== -1
+
+            _rules.filter((_) => _ !== "bail").forEach((rule: string) => {
                 let params: Array<string> = []
                 const [name, _params] = rule.split(":")
 
@@ -99,10 +110,10 @@ export class Rules {
                 }
 
                 if (!parsed[field]) {
-                    parsed[field] = []
+                    parsed[field] = { bail, validators: [] }
                 }
 
-                parsed[field].push({ name, params : Rules.registered[name].parseParams(params) })
+                parsed[field].validators.push({ name, params : Rules.registered[name].parseParams(params) })
             })
 
             return parsed

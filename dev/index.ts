@@ -1,4 +1,4 @@
-import { Validator } from "../src/Validator"
+import Validator from "../src/index"
 
 const fields = {
     name : "abc"
@@ -8,7 +8,7 @@ const rules = {
     name : "required|min:3",
     test : "async",
     foo: {
-        bar : "required"
+        bar : "bail|required|min:3"
     }
 }
 
@@ -25,4 +25,7 @@ const validator = new Validator(fields, rules, messages)
 
 console.warn(validator)
 
-console.warn(validator.passes(), validator.fails())
+console.warn(validator.passes())
+console.warn(validator.errors.all())
+console.warn(validator.errors.get("foo.bar"))
+console.warn(validator.errors.first("foo.bar", "es"))
