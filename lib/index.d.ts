@@ -1,2 +1,2 @@
-export * from "./Validator";
-import "./lang";
+declare const validator: Object;
+export default validator;

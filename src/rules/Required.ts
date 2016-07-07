@@ -1,5 +1,4 @@
 import { Rule, RuleValidator } from "./Rule"
-import { ErrorParams } from "../Errors"
 
 const isAsync: boolean = false
 const name: string = "require"

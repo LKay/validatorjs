@@ -1,12 +1,13 @@
 import { Rules } from "./Rules";
 import { RuleValidator } from "./rules/Rule";
-import { Messages, ValidationMessages } from "./Messages";
+import { Messages, MessagesStatic, ValidationMessages } from "./Messages";
 import { Errors } from "./Errors";
 export declare type AttributeFormatter = (attribute: string) => string;
 export declare class Validator {
     static Promise: PromiseConstructor;
     static lang: string;
     static attributeFormatter: AttributeFormatter;
+    static Messages: MessagesStatic;
     input: any;
     rules: Rules;
     messages: Messages;
@@ -25,4 +26,3 @@ export declare class Validator {
     static register(name: string, fn: RuleValidator, message?: string): void;
     static registerAsync(name: string, fn: RuleValidator, message?: string): void;
 }
-export default Validator;

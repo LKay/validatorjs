@@ -1,4 +1,4 @@
-import Validator from "../src/index"
+import { Validator } from "../src/Validator"
 
 const fields = {
     name : "abc"
@@ -19,7 +19,11 @@ const messages = {
     }
 }
 
-console.warn(Validator)
+console.warn("mesages", Validator.Messages.messages)
+
+Validator.setMessages("aa", { "foo" : "bar" })
+
+console.warn("mesages", Validator.Messages.messages)
 
 const validator = new Validator(fields, rules, messages)
 

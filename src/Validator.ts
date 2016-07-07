@@ -1,7 +1,6 @@
-import { deprecate } from "core-decorators"
 import { Rules, ParsedRules } from "./Rules"
 import { RuleValidator } from "./rules/Rule"
-import { Messages, ValidationMessages } from "./Messages"
+import { Messages, MessagesStatic, ValidationMessages } from "./Messages"
 import { Errors } from "./Errors"
 
 export type AttributeFormatter = (attribute: string) => string
@@ -16,6 +15,7 @@ export class Validator {
     /* Defaults */
     public static lang: string = "en"
     public static attributeFormatter: AttributeFormatter = formatter
+    public static Messages: MessagesStatic = Messages
 
     public input: any
     public rules: Rules
@@ -68,11 +68,11 @@ export class Validator {
     }
 
     public static useLang (lang: string): void {
-
+        Validator.lang = lang
     }
 
     public static getDefaultLang (): string {
-        return ""
+        return Validator.lang
     }
 
     public static setAttributeFormatter (formatter: AttributeFormatter): void {
@@ -88,5 +88,3 @@ export class Validator {
     }
 
 }
-
-export default Validator

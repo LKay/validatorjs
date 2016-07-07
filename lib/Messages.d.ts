@@ -11,6 +11,9 @@ export interface LocalisedMessages {
 export interface ErrorMessages {
     [field: string]: Array<string>;
 }
+export interface MessagesStatic {
+    messages: LocalisedMessages;
+}
 export declare class Messages {
     static messages: LocalisedMessages;
     customMessages: CustomValidationMessages;

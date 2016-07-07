@@ -5,4 +5,8 @@ spec/checklist.md
 coverage
 npm-debug.log
 
+.idea
 typings
+dist
+lib
+dev

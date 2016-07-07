@@ -8,7 +8,7 @@ export class Rule {
     public fn: RuleValidator
     public message: string
     public isAsync: boolean
-    
+
     constructor (name: string, fn: RuleValidator, message?: string, isAsync: boolean = false) {
         this.name = name
         this.fn = fn
@@ -19,7 +19,7 @@ export class Rule {
     public parseParams (params: Array<string>): Array<any> {
         return params
     }
-    
+
     public getErrorParams (...params: any[]): ErrorParams {
         return {}
     }
@@ -56,5 +56,5 @@ export class Rule {
         return Promise.resolve(this.validate(value, options, attribute))
     }
     */
-    
+
 }

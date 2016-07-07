@@ -19,6 +19,10 @@ export interface ErrorMessages {
     [field: string]: Array<string>
 }
 
+export interface MessagesStatic {
+    messages: LocalisedMessages
+}
+
 export class Messages {
     
     public static messages: LocalisedMessages = { en }

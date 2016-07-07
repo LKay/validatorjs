@@ -18,15 +18,14 @@ export class RuleMin extends Rule {
     public static make (): RuleMin {
         return new RuleMin()
     }
-    
+
     public parseParams (params: Array<string>): ValidatorMinParams {
-        const [_min] = params
+        const [_min]: Array<string> = params
         const min: number = parseInt(_min, 10)
-        
+
         if (!_min || isNaN(min)) {
             throw new RuleValidatorError(this.name)
         }
-        
         return [min]
     }
 
