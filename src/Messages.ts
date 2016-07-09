@@ -34,18 +34,18 @@ export class Messages {
         this.customMessages.custom = this.customMessages.custom || {}
     }
 
-    getErrorMessages (errors: ValidationErrors, lang: string): ErrorMessages {
+    public getErrorMessages (errors: ValidationErrors, lang: string): ErrorMessages {
         return Object.keys(errors).reduce((messages: ErrorMessages, field: string) => {
             messages[field] = this.getMessages(field, errors[field], lang)
             return messages
         }, {} as ErrorMessages)
     }
 
-    getMessages (field: string, errors: Array<ValidationError>, lang: string) {
+    public getMessages (field: string, errors: Array<ValidationError>, lang: string) {
         return errors.map((error: ValidationError) => this.getMessage(field, error, lang))
     }
 
-    getMessage (field: string, error: ValidationError, lang: string): string {
+    public getMessage (field: string, error: ValidationError, lang: string): string {
         const key: string = `${field}.${error.name}`
         const template = objectPath.get(this.customMessages.custom, `${key}.${error.numeric ? "numeric" : "string"}`)
                          || objectPath.get(this.customMessages.custom, key)
