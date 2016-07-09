@@ -1,4 +1,6 @@
-module.exports = {
+import { ValidationMessages } from "../Messages"
+
+const lang: ValidationMessages = {
     accepted: ':attributeを確認してください。',
     alpha: ':attributeは英字のみで入力してください。',
     alpha_dash: ':attributeは英字とダッシュと下線のみで入力してください。',
@@ -31,4 +33,6 @@ module.exports = {
     url        : ":attributeはURIを入力してください。",
     regex      : ":attributeの値 \":value\" はパターンにマッチする必要があります。",
     attributes : {}
-};
+}
+
+export default lang

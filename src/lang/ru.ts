@@ -1,4 +1,6 @@
-module.exports = {
+import { ValidationMessages } from "../Messages"
+
+const lang: ValidationMessages = {
   accepted: 'Вы должны принять :attribute.',
   alpha: 'Поле :attribute может содержать только буквы.',
   alpha_dash: 'Поле :attribute может содержать только буквы, цифры, дефисы и символы подчёркивания.',
@@ -31,4 +33,6 @@ module.exports = {
   url: 'Поле :attribute должно содержать валидный URL.',
   regex: 'Неверный формат поля :attribute.',
   attributes: {}
-};
+}
+
+export default lang

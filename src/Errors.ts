@@ -8,6 +8,7 @@ export interface ErrorParams {
 
 export interface ValidationError {
     name: string
+    numeric: boolean
     params: ErrorParams
 }
 
@@ -65,5 +66,11 @@ export class Errors {
 export class RuleValidatorError extends Error {
     constructor (name: string) {
         super(`ValidatorError: Parameters for rule '${name}' have incorrect format.`)
+    }
+}
+
+export class AsyncTimeoutError extends Error {
+    constructor (name: string, timeout: number) {
+        super(`TimeoutError: Rule '${name}' has failed due to timeout. Asynchronous check have not returned any result after ${timeout} ms.`)
     }
 }

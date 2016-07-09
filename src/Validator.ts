@@ -4,6 +4,7 @@ import { Messages, MessagesStatic, ValidationMessages } from "./Messages"
 import { Errors } from "./Errors"
 
 export type AttributeFormatter = (attribute: string) => string
+export type AsyncCallback = (result: boolean) => void
 
 const formatter: AttributeFormatter = (attribute: string) => attribute.replace(/[_\[]/g, ' ').replace(/]/g, '')
 
@@ -15,8 +16,8 @@ export class Validator {
     /* Defaults */
     public static lang: string = "en"
     public static attributeFormatter: AttributeFormatter = formatter
-    public static Messages: MessagesStatic = Messages
 
+    public static Messages: MessagesStatic = Messages
     public input: any
     public rules: Rules
     public messages: Messages
@@ -36,18 +37,18 @@ export class Validator {
         return this.rules.validate(this.input)
     }
 
-    public checkAsync (passes?: Function, fails?: Function): Promise<boolean> {
-        return this.rules.validateAsync(this.input)
+    public checkAsync (passes?: AsyncCallback, fails?: AsyncCallback): Promise<boolean> {
+        return this.rules.validateAsync(this.input, passes, fails)
     }
 
-    public passes (callback?: Function): boolean | Promise<boolean> {
+    public passes (callback?: AsyncCallback): boolean | Promise<boolean> {
         if (this.rules.hasAsync) {
             return this.checkAsync(callback)
         }
         return this.check()
     }
 
-    public fails (callback?: Function): boolean | Promise<boolean> {
+    public fails (callback?: AsyncCallback): boolean | Promise<boolean> {
         if (this.rules.hasAsync) {
             return this.checkAsync(null, callback)
                 .then((result: boolean) => Validator.Promise.resolve(!result))
@@ -76,7 +77,7 @@ export class Validator {
     }
 
     public static setAttributeFormatter (formatter: AttributeFormatter): void {
-
+        Validator.attributeFormatter = formatter
     }
 
     public static register (name: string, fn: RuleValidator, message?: string): void {

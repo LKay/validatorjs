@@ -1,12 +1,12 @@
 import { flatten } from "flat"
+import objectAssign = require("object-assign")
 import * as objectPath from "object-path"
-import { Validator } from "./Validator"
-import { Rule, RuleValidator } from "./rules/Rule"
-import { Errors } from "./Errors"
+import { Validator, AsyncCallback } from "./Validator"
+import { Rule, RuleValidator, AsyncResult } from "./rules/Rule"
+import { Errors, AsyncTimeoutError } from "./Errors"
 /* Predefined Rules */
 import { RuleRequired } from "./rules/Required"
 import { RuleMin } from "./rules/Min"
-import {error} from "util";
 
 export interface RegisteredRules {
     [name: string]: Rule
@@ -20,14 +20,20 @@ export interface ParsedValidator {
 export interface ParsedRules {
     [name: string]: {
         bail: boolean
+        numeric: boolean
         validators: Array<ParsedValidator>
-    }}
+    }
+}
+
+export type AsyncDone = (result: boolean, reason?: string) => void
 
 export class Rules {
 
     public hasAsync: boolean = false
     private rules: ParsedRules
     private errors: Errors
+
+    public static numericRules: Array<string> = ["integer", "numeric"]
 
     public static registered: RegisteredRules = {
         "min"      : RuleMin.make(),
@@ -41,8 +47,6 @@ export class Rules {
     constructor (rules: any, errors: Errors) {
         this.errors = errors
         this.rules = this.parseRules(flatten(rules, { safe : true }))
-
-        console.warn(this.rules)
     }
 
     public getRules (): ParsedRules {
@@ -53,6 +57,7 @@ export class Rules {
         this.errors.clear()
 
         Object.keys(this.rules).forEach((field: string) => {
+            const value: any = objectPath.get(input, field)
             let passes: boolean = true
 
             this.rules[field].validators.forEach((rule: ParsedValidator) => {
@@ -60,13 +65,13 @@ export class Rules {
                     return
                 }
 
-                const value: any = objectPath.get(input, field)
                 const result = Rules.registered[rule.name].fn(value, ...rule.params, input)
 
                 if (!result) {
                     passes = false
                     const errorParams = Rules.registered[rule.name].getErrorParams(...rule.params)
-                    this.errors.add(field, { name : rule.name, params : errorParams })
+                    const numeric: boolean = this.rules[field].numeric
+                    this.errors.add(field, { name : rule.name, numeric, params : errorParams })
                 }
             })
         })
@@ -74,8 +79,80 @@ export class Rules {
         return this.errors.errorsCount === 0
     }
 
-    public validateAsync (input: any): Promise<boolean> {
-        return Validator.Promise.resolve(true)
+    public validateAsync (input: any, passes?: AsyncCallback, fails?: AsyncCallback): Promise<boolean> {
+        this.errors.clear()
+
+        let sequence: Promise<boolean> = Validator.Promise.resolve(true)
+        let allPass: boolean = true
+
+        Object.keys(this.rules).forEach((field: string) => {
+            const value: any = objectPath.get(input, field)
+
+            this.rules[field].validators.forEach((rule: ParsedValidator) => {
+                const ruleValidator = Rules.registered[rule.name]
+
+                const handleError = (reason?: string) => {
+                    allPass = false
+                    const errorParams = ruleValidator.getErrorParams(...rule.params)
+                    const numeric: boolean = this.rules[field].numeric
+                    this.errors.add(field, { name : rule.name, numeric, params : objectAssign({}, errorParams, { reason }) })
+                }
+
+                sequence = sequence.then((passes: boolean) =>{
+                    if (this.rules[field].bail && !passes) {
+                        return Validator.Promise.resolve(false)
+                    }
+
+                    if (!ruleValidator.isAsync) {
+                        const syncResult = ruleValidator.fn(value, ...rule.params, input)
+                        if (!syncResult) {
+                            handleError()
+                        }
+                        return Validator.Promise.resolve(syncResult as boolean)
+                    }
+
+                    return new Validator.Promise((resolve: Function, reject: Function) => {
+                        const timer = setTimeout(() => {
+                            reject(new AsyncTimeoutError(rule.name, ruleValidator.timeout))
+                        }, ruleValidator.timeout)
+                        
+                        const done: AsyncDone = (result: boolean, reason?: string) => {
+                            clearTimeout(timer)
+                            if (!result) {
+                                handleError(reason)
+                            }
+                            resolve(result)
+                        }
+
+                        const asyncResult: any = ruleValidator.fn(value, ...rule.params, done, input)
+
+                        /* Check if returned value is Promise instance and handle its processing */
+                        if (!!asyncResult && ["object", "function"].indexOf(typeof asyncResult) !== -1 && typeof asyncResult.then === "function") {
+                            asyncResult
+                                .then((result: AsyncResult) => {
+                                    if (Array.isArray(result)) {
+                                        const [res, reason] = result as [boolean, string]
+                                        done(res, reason)
+                                    } else {
+                                        done(result)
+                                    }
+                                })
+                                .catch((e: any) => done(false, String(e)))
+                        }
+                    })
+                })
+            })
+        })
+        return sequence
+            .then(() => {
+                if (typeof passes === "function") {
+                    passes(allPass)
+                }
+                if (typeof fails === "function") {
+                    fails(!allPass)
+                }
+                return Validator.Promise.resolve(allPass)
+            })
     }
 
     private parseRules (rules: any): any {
@@ -92,6 +169,7 @@ export class Rules {
             }
 
             const bail: boolean = _rules.indexOf("bail") !== -1
+            const numeric: boolean = _rules.some((_: string) => Rules.numericRules.indexOf(_) !== -1)
 
             _rules.filter((_) => _ !== "bail").forEach((rule: string) => {
                 let params: Array<string> = []
@@ -110,7 +188,7 @@ export class Rules {
                 }
 
                 if (!parsed[field]) {
-                    parsed[field] = { bail, validators: [] }
+                    parsed[field] = { bail, numeric, validators: [] }
                 }
 
                 parsed[field].validators.push({ name, params : Rules.registered[name].parseParams(params) })

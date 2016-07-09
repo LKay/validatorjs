@@ -47,7 +47,8 @@ export class Messages {
 
     getMessage (field: string, error: ValidationError, lang: string): string {
         const key: string = `${field}.${error.name}`
-        const template = objectPath.get(this.customMessages.custom, key)
+        const template = objectPath.get(this.customMessages.custom, `${key}.${error.numeric ? "numeric" : "string"}`)
+                         || objectPath.get(this.customMessages.custom, key)
                          || objectPath.get(this.customMessages.custom, field)
                          || objectPath.get(this.customMessages, error.name)
                          || objectPath.get(Messages.messages[lang], error.name)

@@ -1,4 +1,6 @@
-module.exports = {
+import { ValidationMessages } from "../Messages"
+
+const lang: ValidationMessages = {
   accepted: 'Le champs :attribute doit être accepté.',
   alpha: 'Le champs :attribute ne peut contenir que des caractères alphabétiques.',
   alpha_dash: 'Le champs :attribute ne peut contenir que des caractères alphanumériques, des tirets et underscores.',
@@ -31,4 +33,6 @@ module.exports = {
   url: 'Le format du champs :attribute est invalide.',
   regex: 'Le format du champs :attribute est invalide.',
   attributes: {}
-};
+}
+
+export default lang
