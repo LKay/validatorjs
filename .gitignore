@@ -7,6 +7,4 @@ npm-debug.log
 
 .idea
 typings
-dist
-lib
 dev

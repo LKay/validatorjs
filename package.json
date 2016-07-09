@@ -47,6 +47,7 @@
     "chai": "^3.5.0",
     "chai-as-promised": "^5.3.0",
     "es6-promise": "^3.2.1",
+    "glob": "^7.0.5",
     "html-webpack-plugin": "^2.22.0",
     "jsdom": "^9.4.1",
     "jsdom-global": "^2.0.0",
@@ -72,25 +73,17 @@
     "object-path": "^0.11.1"
   },
   "scripts": {
-    "//" : "Prepare",
+    "//": "Deploy",
     "tsconfig": "./node_modules/tsconfig-glob/cli .",
     "prepare": "typings install && npm run tsconfig",
-
-    "//": "Dev",
     "start": "webpack-dev-server --config webpack.dev.conf.js",
     "clean": "npm prune && rm -rf node_modules typings lib dist",
-
-    "//": "Compile",
     "lib": "tsc -d",
     "locale": "webpack --config webpack.locale.conf.js",
     "compile": "webpack --config webpack.dist.conf.js && uglifyjs ./dist/validatorjs.js -c -m --screw-ie8 -o ./dist/validatorjs.min.js",
     "dist": "npm run compile && npm run locale",
-
-    "//": "Testing",
     "linter": "./node_modules/tslint/bin/tslint src/**/*.ts",
     "test": "npm run linter && ./node_modules/mocha/bin/mocha --require jsdom-global/register --compilers ts:ts-node/register test/**/*.specs.ts",
-
-    "//": "Deploy",
     "prepublish": "npm run lib && npm run dist"
   }
 }
