@@ -20,6 +20,7 @@ export interface ParsedValidator {
 export interface ParsedRules {
     [name: string]: {
         bail: boolean
+        sometimes: boolean
         numeric: boolean
         validators: Array<ParsedValidator>
     }
@@ -60,6 +61,10 @@ export class Rules {
             const value: any = objectPath.get(input, field)
             let passes: boolean = true
 
+            if (this.rules[field].sometimes && value === undefined) {
+                return
+            }
+
             this.rules[field].validators.forEach((rule: ParsedValidator) => {
                 if (this.rules[field].bail && !passes) {
                     return
@@ -87,6 +92,10 @@ export class Rules {
 
         Object.keys(this.rules).forEach((field: string) => {
             const value: any = objectPath.get(input, field)
+
+            if (this.rules[field].sometimes && value === undefined) {
+                return
+            }
 
             this.rules[field].validators.forEach((rule: ParsedValidator) => {
                 const ruleValidator = Rules.registered[rule.name]
@@ -169,9 +178,10 @@ export class Rules {
             }
 
             const bail: boolean = _rules.indexOf("bail") !== -1
+            const sometimes: boolean = _rules.indexOf("sometimes") !== -1
             const numeric: boolean = _rules.some((_: string) => Rules.numericRules.indexOf(_) !== -1)
 
-            _rules.filter((_) => _ !== "bail").forEach((rule: string) => {
+            _rules.filter((_) => ["bail", "sometimes"].indexOf(_) === -1).forEach((rule: string) => {
                 let params: Array<string> = []
                 const [name, _params] = rule.split(":")
 
@@ -188,7 +198,7 @@ export class Rules {
                 }
 
                 if (!parsed[field]) {
-                    parsed[field] = { bail, numeric, validators: [] }
+                    parsed[field] = { bail, sometimes, numeric, validators: [] }
                 }
 
                 parsed[field].validators.push({ name, params : Rules.registered[name].parseParams(params) })
