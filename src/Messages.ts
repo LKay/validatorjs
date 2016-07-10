@@ -28,6 +28,7 @@ export class Messages {
     public static messages: LocalisedMessages = { en }
     
     public customMessages: CustomValidationMessages
+    public attributeNames: any = {}
     
     constructor (messages?: ValidationMessages) {
         this.customMessages = messages || {}
@@ -57,6 +58,6 @@ export class Messages {
         return Object.keys(error.params).reduce(
             (message: string, param: string) => message.replace(`:${param}`, error.params[param]),
             template as string
-        ).replace(":attribute", Validator.attributeFormatter(field))
+        ).replace(":attribute", Validator.attributeFormatter(objectPath.get(this.attributeNames, field, field)))
     }
 }

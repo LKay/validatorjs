@@ -56,6 +56,10 @@ export class Validator {
         return !this.check()
     }
 
+    public setAttributeNames (attributeNames: any) {
+        this.messages.attributeNames = attributeNames
+    }
+
     public static make (input: any, rules: any, messages?: any): Validator {
         return new Validator(input, rules, messages)
     }
