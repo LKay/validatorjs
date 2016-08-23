@@ -1,3 +1,4 @@
+import * as invariant from "invariant"
 import { Rules, ParsedRules } from "./Rules"
 import { RuleValidator } from "./rules/Rule"
 import { Messages, MessagesStatic, ValidationMessages } from "./Messages"
@@ -85,10 +86,22 @@ export class Validator {
     }
 
     public static register (name: string, fn: RuleValidator, message?: string): void {
+        invariant(
+            (!!name && typeof name === "string") &&
+            (!!fn && typeof fn === "function") &&
+            (!!message ? typeof message === "string" : true),
+            "Parameters to create rule are incorrect."
+        )
         Rules.register(name, fn, message)
     }
     
     public static registerAsync (name: string, fn: RuleValidator, message?: string): void {
+        invariant(
+            (!!name && typeof name === "string") &&
+            (!!fn && typeof fn === "function") &&
+            (!!message ? typeof message === "string" : true),
+            "Parameters to create rule are incorrect."
+        )
         Rules.register(name, fn, message, true)
     }
 
