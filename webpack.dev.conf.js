@@ -1,13 +1,18 @@
 const webpack = require("webpack")
 const path = require("path")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
+const DashboardPlugin = require("webpack-dashboard/plugin")
 
 const plugins = [
+    new DashboardPlugin(),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
     new HtmlWebpackPlugin({
         title : "Validator JS - DEV",
         cache : true
+    }),
+    new webpack.ProvidePlugin({
+        "Promise" : "exports?global.Promise!es6-promise"
     })
 ]
 
@@ -28,7 +33,8 @@ module.exports = {
     devServer : {
         contentBase        : path.join(__dirname, "build"),
         port               : 8080,
-        hot                : true
+        hot                : true,
+        quiet              : true
     },
 
     resolve : {
@@ -37,7 +43,7 @@ module.exports = {
 
     module : {
         loaders : [
-            { test : /\.ts$/, exclude: /node_modules/, loader: "ts" }
+            { test : /\.ts$/, exclude: /node_modules/, loaders: ["babel", "awesome-typescript"] }
         ]
     }
 }

@@ -1,12 +1,8 @@
 import { flatten } from "flat"
-import objectAssign = require("object-assign")
 import * as objectPath from "object-path"
 import { Validator, AsyncCallback } from "./Validator"
 import { Rule, RuleValidator, AsyncResult } from "./rules/Rule"
 import { Errors, AsyncTimeoutError } from "./Errors"
-/* Predefined Rules */
-import { RuleRequired } from "./rules/Required"
-import { RuleMin } from "./rules/Min"
 
 export interface RegisteredRules {
     [name: string]: Rule
@@ -36,10 +32,7 @@ export class Rules {
 
     public static numericRules: Array<string> = ["integer", "numeric"]
 
-    public static registered: RegisteredRules = {
-        "min"      : RuleMin.make(),
-        "required" : RuleRequired.make()
-    }
+    public static registered: RegisteredRules = {}
 
     public static register (name: string, fn: RuleValidator, message?: string, isAsync: boolean = false): void {
         Rules.registered[name] = new Rule(name, fn, message, isAsync)
@@ -104,7 +97,7 @@ export class Rules {
                     allPass = false
                     const errorParams = ruleValidator.getErrorParams(...rule.params)
                     const numeric: boolean = this.rules[field].numeric
-                    this.errors.add(field, { name : rule.name, numeric, params : objectAssign({}, errorParams, { reason }) })
+                    this.errors.add(field, { name : rule.name, numeric, params : Object.assign({}, errorParams, { reason }) })
                 }
 
                 sequence = sequence.then((passes: boolean) =>{
@@ -143,7 +136,7 @@ export class Rules {
                                         const [res, reason] = result as [boolean, string]
                                         done(res, reason)
                                     } else {
-                                        done(result)
+                                        done(result as boolean)
                                     }
                                 })
                                 .catch((e: any) => done(false, String(e)))

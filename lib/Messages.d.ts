@@ -17,6 +17,7 @@ export interface MessagesStatic {
 export declare class Messages {
     static messages: LocalisedMessages;
     customMessages: CustomValidationMessages;
+    attributeNames: any;
     constructor(messages?: ValidationMessages);
     getErrorMessages(errors: ValidationErrors, lang: string): ErrorMessages;
     getMessages(field: string, errors: Array<ValidationError>, lang: string): string[];

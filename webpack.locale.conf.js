@@ -27,7 +27,7 @@ module.exports = {
 
     module : {
         loaders : [
-            { test : /\.ts$/, exclude: /node_modules|lib/, loader: "babel?presets[]=es2015!ts" }
+            { test : /\.ts$/, exclude: /node_modules|lib/, loaders: ["babel", "awesome-typescript"] }
         ]
     }
 }

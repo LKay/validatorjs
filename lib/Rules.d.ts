@@ -11,6 +11,7 @@ export interface ParsedValidator {
 export interface ParsedRules {
     [name: string]: {
         bail: boolean;
+        sometimes: boolean;
         numeric: boolean;
         validators: Array<ParsedValidator>;
     };

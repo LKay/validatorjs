@@ -1,22 +1,16 @@
+import { Rules } from "../Rules"
 import { Rule, RuleValidator } from "./Rule"
 import { RuleValidatorError, ErrorParams } from "../Errors"
-
-const isAsync: boolean = false
-const name: string = "min"
-const validator: RuleValidator = (value: any, min: number) => {
-    return (typeof value === "number" && value >= min) || (typeof value === "string" && value.length >= min) || false
-}
 
 export type ValidatorMinParams = [number]
 
 export class RuleMin extends Rule {
 
-    constructor () {
-        super(name, validator, null, isAsync)
-    }
+    public static ruleName: string = "min"
 
-    public static make (): RuleMin {
-        return new RuleMin()
+    public name: string = RuleMin.ruleName
+    public fn: RuleValidator = (value: any, min: number) => {
+        return (typeof value === "number" && value >= min) || (typeof value === "string" && value.length >= min) || false
     }
 
     public parseParams (params: Array<string>): ValidatorMinParams {
@@ -34,3 +28,5 @@ export class RuleMin extends Rule {
     }
 
 }
+
+Rules.registered[RuleMin.ruleName] = new RuleMin()

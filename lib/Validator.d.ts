@@ -18,6 +18,7 @@ export declare class Validator {
     checkAsync(passes?: AsyncCallback, fails?: AsyncCallback): Promise<boolean>;
     passes(callback?: AsyncCallback): boolean | Promise<boolean>;
     fails(callback?: AsyncCallback): boolean | Promise<boolean>;
+    setAttributeNames(attributeNames: any): void;
     static make(input: any, rules: any, messages?: any): Validator;
     static setMessages(lang: string, messages: ValidationMessages): void;
     static getMessages(lang?: string): ValidationMessages;

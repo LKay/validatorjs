@@ -1,19 +1,15 @@
+import { Rules } from "../Rules"
 import { Rule, RuleValidator } from "./Rule"
-
-const isAsync: boolean = false
-const name: string = "require"
-const validator: RuleValidator = (value: any) => {
-    return [undefined, null].indexOf(value) === -1 || (typeof value === "string" && value.replace(/\s/g, "").length > 0)
-}
 
 export class RuleRequired extends Rule {
 
-    constructor () {
-        super(name, validator, null, isAsync)
-    }
+    public static ruleName: string = "required"
 
-    public static make (): RuleRequired {
-        return new RuleRequired()
+    public name: string = RuleRequired.ruleName
+    public fn: RuleValidator = (value: any) => {
+        return typeof value === "string" ? value.replace(/\s/g, "").length > 0 : [undefined, null].indexOf(value) === -1
     }
 
 }
+
+Rules.registered[RuleRequired.ruleName] = new RuleRequired()

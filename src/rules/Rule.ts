@@ -10,15 +10,15 @@ export class Rule {
     public name: string
     public fn: RuleValidator
     public message: string
-    public isAsync: boolean
-    public timeout: number
+    public isAsync: boolean = false
+    public timeout: number = ASYNC_TIMEOUT
 
-    constructor (name: string, fn: RuleValidator, message?: string, isAsync: boolean = false, timeout: number = ASYNC_TIMEOUT) {
-        this.name = name
-        this.fn = fn
-        this.message = message
-        this.isAsync = isAsync
-        this.timeout = timeout
+    constructor (name?: string, fn?: RuleValidator, message?: string, isAsync?: boolean, timeout?: number) {
+        this.name = name || this.name
+        this.fn = fn || this.fn
+        this.message = message || this.message
+        this.isAsync = isAsync || this.isAsync
+        this.timeout = timeout || this.timeout
     }
 
     public parseParams (params: Array<string>): Array<any> {
