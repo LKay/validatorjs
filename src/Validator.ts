@@ -32,9 +32,7 @@ export class Validator {
     }
 
     public check (): boolean {
-        if (this.rules.hasAsync) {
-            throw new Error("Cannot synchronously validate schema containing asynchronous rules.")
-        }
+        invariant(!this.rules.hasAsync, "Cannot synchronously validate schema containing asynchronous rules.")
         return this.rules.validate(this.input)
     }
 

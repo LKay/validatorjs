@@ -97,9 +97,7 @@ var Validator = function () {
     _createClass(Validator, [{
         key: "check",
         value: function check() {
-            if (this.rules.hasAsync) {
-                throw new Error("Cannot synchronously validate schema containing asynchronous rules.");
-            }
+            invariant(!this.rules.hasAsync, "Cannot synchronously validate schema containing asynchronous rules.");
             return this.rules.validate(this.input);
         }
     }, {
@@ -274,7 +272,7 @@ var RuleValidatorError = function (_Error) {
     function RuleValidatorError(name) {
         _classCallCheck(this, RuleValidatorError);
 
-        return _possibleConstructorReturn(this, Object.getPrototypeOf(RuleValidatorError).call(this, "ValidatorError: Parameters for rule '" + name + "' have incorrect format."));
+        return _possibleConstructorReturn(this, (RuleValidatorError.__proto__ || Object.getPrototypeOf(RuleValidatorError)).call(this, "ValidatorError: Parameters for rule '" + name + "' have incorrect format."));
     }
 
     return RuleValidatorError;
@@ -288,7 +286,7 @@ var AsyncTimeoutError = function (_Error2) {
     function AsyncTimeoutError(name, timeout) {
         _classCallCheck(this, AsyncTimeoutError);
 
-        return _possibleConstructorReturn(this, Object.getPrototypeOf(AsyncTimeoutError).call(this, "TimeoutError: Rule '" + name + "' has failed due to timeout. Asynchronous check have not returned any result after " + timeout + " ms."));
+        return _possibleConstructorReturn(this, (AsyncTimeoutError.__proto__ || Object.getPrototypeOf(AsyncTimeoutError)).call(this, "TimeoutError: Rule '" + name + "' has failed due to timeout. Asynchronous check have not returned any result after " + timeout + " ms."));
     }
 
     return AsyncTimeoutError;
@@ -316,9 +314,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(this, function(){
   'use strict';
 
-  var
-    toStr = Object.prototype.toString,
-    _hasOwnProperty = Object.prototype.hasOwnProperty;
+  var toStr = Object.prototype.toString;
+  function hasOwnProperty(obj, prop) {
+    if(obj == null) {
+      return false
+    }
+    //to handle objects with null prototypes (too edge case?)
+    return Object.prototype.hasOwnProperty.call(obj, prop)
+  }
 
   function isEmpty(value){
     if (!value) {
@@ -328,7 +331,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         return true;
     } else if (typeof value !== 'string') {
         for (var i in value) {
-            if (_hasOwnProperty.call(value, i)) {
+            if (hasOwnProperty(value, i)) {
                 return false;
             }
         }
@@ -381,7 +384,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     };
 
     function getShallowProperty(obj, prop) {
-      if (options.includeInheritedProps || (typeof prop === 'number' && Array.isArray(obj)) || _hasOwnProperty.call(obj, prop)) {
+      if (options.includeInheritedProps || (typeof prop === 'number' && Array.isArray(obj)) || hasOwnProperty(obj, prop)) {
         return obj[prop];
       }
     }
@@ -418,10 +421,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
 
     objectPath.has = function (obj, path) {
-      if (obj == null) {
-        return false;
-      }
-
       if (typeof path === 'number') {
         path = [path];
       } else if (typeof path === 'string') {
@@ -429,13 +428,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
 
       if (!path || path.length === 0) {
-        return false;
+        return !!obj;
       }
 
       for (var i = 0; i < path.length; i++) {
         var j = getKey(path[i]);
+
         if((typeof j === 'number' && isArray(obj) && j < obj.length) ||
-          (options.includeInheritedProps ? (j in Object(obj)) : _hasOwnProperty.call(obj, j))) {
+          (options.includeInheritedProps ? (j in Object(obj)) : hasOwnProperty(obj, j))) {
           obj = obj[j];
         } else {
           return false;
@@ -486,7 +486,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         value.length = 0;
       } else if (isObject(value)) {
         for (i in value) {
-          if (_hasOwnProperty.call(value, i)) {
+          if (hasOwnProperty(value, i)) {
             delete value[i];
           }
         }
